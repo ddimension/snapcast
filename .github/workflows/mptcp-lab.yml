@@ -34,4 +34,6 @@ jobs:
         run: sudo tests/mptcp/lab.sh
 
       - name: Run optimization sweep
+        # sudo: lab.sh (invoked by optimize.sh) skips the user-namespace
+        # wrapper when running as root - GitHub runners block unshare -Urn
         run: sudo tests/mptcp/optimize.sh

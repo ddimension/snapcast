@@ -18,7 +18,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y cmake libboost-dev libasound2-dev tcpdump
+          sudo apt-get install -y cmake libboost-dev libasound2-dev libavahi-client-dev libflac-dev libogg-dev libvorbis-dev libopus-dev libsoxr-dev libexpat1-dev tcpdump
 
       - name: Configure
         run: cmake -S . -B build -DBUILD_TESTS=OFF

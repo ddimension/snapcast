@@ -425,8 +425,20 @@ void Controller::start()
         else if (settings_.server.uri.scheme == "wss")
             clientConnection_ = make_unique<ClientConnectionWss>(io_context_, ssl_context_, settings_.server);
 #endif
+        else if (settings_.server.mptcp)
+        {
+#ifdef HAS_MPTCP
+            if (snapcast::net::is_available())
+                clientConnection_ = make_unique<ClientConnectionTcp<snapcast::net::mptcp::socket>>(io_context_, settings_.server);
+            else
+#endif
+            {
+                LOG(WARNING, LOG_TAG) << "MPTCP is not supported, falling back to TCP\n";
+                clientConnection_ = make_unique<ClientConnectionTcp<tcp_socket>>(io_context_, settings_.server);
+            }
+        }
         else
-            clientConnection_ = make_unique<ClientConnectionTcp>(io_context_, settings_.server);
+            clientConnection_ = make_unique<ClientConnectionTcp<tcp_socket>>(io_context_, settings_.server);
         worker();
     };
 

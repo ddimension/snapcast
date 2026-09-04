@@ -39,6 +39,11 @@ if [ ! -x "$BIN_DIR/snapserver" ] || [ ! -x "$BIN_DIR/snapclient" ]; then
 fi
 
 if [ "${LAB_INNER:-}" != "1" ]; then
+    if [ "$(id -u)" = "0" ]; then
+        # already root (e.g. CI with sudo): no user namespace needed
+        exec env LAB_INNER=1 SCHEDULER="$SCHEDULER" BACKUP="$BACKUP" STALE_LOSS_CNT="$STALE_LOSS_CNT" DUAL_HOMED="$DUAL_HOMED" \
+            MPTCP="$MPTCP" BIN_DIR="$BIN_DIR" bash "$0"
+    fi
     exec unshare -Urn env LAB_INNER=1 SCHEDULER="$SCHEDULER" BACKUP="$BACKUP" STALE_LOSS_CNT="$STALE_LOSS_CNT" DUAL_HOMED="$DUAL_HOMED" \
         MPTCP="$MPTCP" BIN_DIR="$BIN_DIR" bash "$0"
 fi

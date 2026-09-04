@@ -31,7 +31,7 @@ jobs:
         run: cmake --build build --target snapserver snapclient -j$(nproc)
 
       - name: Run failover lab
-        run: tests/mptcp/lab.sh
+        run: sudo tests/mptcp/lab.sh
 
       - name: Run optimization sweep
-        run: tests/mptcp/optimize.sh
+        run: sudo tests/mptcp/optimize.sh

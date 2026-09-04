@@ -59,10 +59,10 @@ FEEDER_PID=""
 CLINS_PID=""
 MON_PID=""
 cleanup() {
-    kill "$CLIENT_PID" "$SERVER_PID" "$TP_A" "$TP_B" "$FEEDER_PID" "$CLINS_PID" "$MON_PID" 2>/dev/null
-    pkill -f "tcp[d]ump -Z root" 2>/dev/null
-    pkill -f "ip mp[tcp] monitor" 2>/dev/null
-    pkill -f "sleep [3]00" 2>/dev/null
+    kill "$CLIENT_PID" "$SERVER_PID" "$TP_A" "$TP_B" "$FEEDER_PID" "$CLINS_PID" "$MON_PID" 2>/dev/null || true
+    pkill -f "tcp[d]ump -Z root" 2>/dev/null || true
+    pkill -f "ip mp[tcp] monitor" 2>/dev/null || true
+    pkill -f "sleep [3]00" 2>/dev/null || true
 }
 trap cleanup EXIT
 

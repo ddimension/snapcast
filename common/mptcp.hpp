@@ -63,12 +63,12 @@ public:
     using acceptor = boost::asio::basic_socket_acceptor<mptcp>;
 
     /// Construct to represent the IPv4 MPTCP protocol
-    mptcp() noexcept : family_(AF_INET)
+    constexpr mptcp() noexcept : family_(AF_INET)
     {
     }
 
     /// Construct to represent the IPv6 MPTCP protocol
-    explicit mptcp(int family) noexcept : family_(family)
+    constexpr explicit mptcp(int family) noexcept : family_(family)
     {
     }
 

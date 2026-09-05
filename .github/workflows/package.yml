@@ -47,7 +47,8 @@ jobs:
       fail-fast: false
       matrix:
         debian:
-          - bullseye
+          # bullseye is EOL: its security archive has moved, apt install
+          # of the build dependencies fails with 404
           - bookworm
           - trixie
         arch:

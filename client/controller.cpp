@@ -77,6 +77,7 @@
 
 // standard headers
 #include <algorithm>
+#include <cstring>
 #include <iostream>
 #include <memory>
 #include <string>
@@ -428,12 +429,20 @@ void Controller::start()
         else if (settings_.server.mptcp)
         {
 #ifdef HAS_MPTCP
-            if (snapcast::net::is_available())
+            int mptcp_error = 0;
+            if (snapcast::net::is_available(&mptcp_error))
+            {
+                LOG(INFO, LOG_TAG) << "MPTCP is enabled, using an MPTCP socket\n";
                 clientConnection_ = make_unique<ClientConnectionTcp<snapcast::net::mptcp::socket>>(io_context_, settings_.server);
+            }
             else
 #endif
             {
-                LOG(WARNING, LOG_TAG) << "MPTCP is not supported, falling back to TCP\n";
+#ifdef HAS_MPTCP
+                LOG(WARNING, LOG_TAG) << "MPTCP is not supported (" << std::strerror(mptcp_error) << "), falling back to TCP\n";
+#else
+                LOG(WARNING, LOG_TAG) << "MPTCP is not supported on this platform, falling back to TCP\n";
+#endif
                 clientConnection_ = make_unique<ClientConnectionTcp<tcp_socket>>(io_context_, settings_.server);
             }
         }

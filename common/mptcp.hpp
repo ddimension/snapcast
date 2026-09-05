@@ -28,6 +28,7 @@
 #include <boost/asio/ip/tcp.hpp>
 
 // standard headers
+#include <cerrno>
 #include <sys/socket.h>
 #include <unistd.h>
 
@@ -126,18 +127,23 @@ inline mptcp::endpoint make_endpoint(const boost::asio::ip::tcp::endpoint& endpo
 }
 
 
-/// @return true if the kernel supports MPTCP sockets
-inline bool is_available() noexcept
+/// @param err if not nullptr, receives the errno of the failed availability check
+/// @return true if the kernel allows creating MPTCP sockets
+inline bool is_available(int* err = nullptr) noexcept
 {
-    static const bool available = []()
+    static const int error = []()
     {
         int fd = ::socket(AF_INET, SOCK_STREAM, IPPROTO_MPTCP);
-        if (fd < 0)
-            return false;
-        ::close(fd);
-        return true;
+        if (fd >= 0)
+        {
+            ::close(fd);
+            return 0;
+        }
+        return errno;
     }();
-    return available;
+    if (err != nullptr)
+        *err = error;
+    return error == 0;
 }
 
 } // namespace net

@@ -27,6 +27,7 @@
 // 3rd party headers
 
 // standard headers
+#include <cstring>
 #include <iostream>
 
 using namespace std;
@@ -232,7 +233,8 @@ void StreamServer::start()
         for (const auto& address : settings_.tcp_stream.bind_to_address)
         {
 #ifdef HAS_MPTCP
-            if (settings_.tcp_stream.mptcp && snapcast::net::is_available())
+            int mptcp_error = 0;
+            if (settings_.tcp_stream.mptcp && snapcast::net::is_available(&mptcp_error))
             {
                 try
                 {
@@ -248,7 +250,7 @@ void StreamServer::start()
                 }
             }
             else if (settings_.tcp_stream.mptcp)
-                LOG(WARNING, LOG_TAG) << "MPTCP is not supported, falling back to TCP\n";
+                LOG(WARNING, LOG_TAG) << "MPTCP is not supported (" << std::strerror(mptcp_error) << "), falling back to TCP\n";
 #endif
             try
             {
